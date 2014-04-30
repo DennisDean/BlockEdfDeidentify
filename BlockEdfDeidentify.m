@@ -2,9 +2,8 @@ function status = BlockEdfDeidentify (varargin)
 % Deidentify file in place, with out rewriting.  Backup of file is
 % reccomended prior to use.
 %
-%
 % Function Prototypes:
-%       status = BlockEdfDeidentify\n');
+%       status = BlockEdfDeidentify(edfFn)
 %       status = BlockEdfDeidentify(edfFn, patient_id, recording_startdate)
 %
 % Version: 0.1.01
@@ -19,7 +18,7 @@ function status = BlockEdfDeidentify (varargin)
 % Boston, MA  02149
 %
 % File created: October 23, 2012
-% Last updated: November 21, 2013 
+% Last updated: April 30, 2014
 %    
 % Copyright © [2012] The Brigham and Women's Hospital, Inc. THE BRIGHAM AND 
 % WOMEN'S HOSPITAL, INC. AND ITS AGENTS RETAIN ALL RIGHTS TO THIS SOFTWARE 
@@ -35,6 +34,10 @@ function status = BlockEdfDeidentify (varargin)
 % Initialize return
 status = 0;
 
+% Remove deidentifying information
+header.recording_startdate = '06.12.04';
+header.patient_id = ' ';
+
 % Process Input parameters
 if nargin == 1
     edfFn = varargin {1};
@@ -43,18 +46,13 @@ elseif nargin == 3
     recording_startdate = varargin {2};
     patient_id = varargin {3};
 else
-    fprintf('status = BlockEdfDeidentify\n');
+    fprintf('status = BlockEdfDeidentify(edfFn)\n');
     fprintf('status = BlockEdfDeidentify(edfFn, patient_id, recording_startdate)\n');
+    error
 end
 
 % Get header from file
 header = blockEdfLoad(edfFn);
-
-% Remove deidentifying information
-header.recording_startdate = '06.12.04';
-header.patient_id = ' ';
-
-% Write Changes to file
 if ~isempty(header)
     status = blockEdfWrite(edfFn, header);
 end
